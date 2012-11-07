@@ -33,3 +33,7 @@ def transport_mono_file(filename):
     remain = remain-s
   wf_out.close()
   wf_in.close()
+
+if __name__=="__main__":
+  filename = "mix_sample.wav"
+  transport_mono_file(filename)
