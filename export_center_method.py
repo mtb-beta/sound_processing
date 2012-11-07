@@ -3,47 +3,63 @@
 """
 Author:mtb_beta
 Date:
-2012年 11月 7日 水曜日 11時36分02秒 JST
-Note:センターをキャンセルした音源を原音を比較し、センターのみを抽出する。
+2012年 11月 3日 土曜日 22時06分20秒 JST
+Note:ステレオで入力されたwavファイルをモノラルに変換するメソッド
 """
 
-
-def export_center_file(filename,filename2):
+def canseled_center_file(filename):
   import wave
   import scipy as sci
 
   chunk =1024
-  wf_in_default =wave.open(filename,'rb')
-  wf_in_canseled_center= wave.open(filename2,'rb')
-  output_file = 'center_'+filename
+  wf_in =wave.open(filename,'rb')
+
+  output_file = 'R_canseled_'+filename
   wf_out =wave.open(output_file,'wb')
-  wf_out.setnchannels(1)
+  wf_out.setnchannels(2)
   wf_out.setsampwidth(2)
   wf_out.setframerate(44100)
-  remain = wf_in_default.getnframes()
+  remain = wf_in.getnframes()
 
   while remain >0:
     s = min(chunk,remain)
-    data = wf_in_default.readframes(s)
-    data2= wf_in_canseled_center.readframes(s)
+    data = wf_in.readframes(s)
     ary =sci.fromstring(data,sci.int16)
-    ary2 =sci.fromstring(data2,sci.int16)
-    #left =sci.int32(ary[::2])
-    #right = sci.int32(ary[1::2])
-    default_signal=sci.int32(ary[::])
-    no_cr_signal=sci.int32(ary2[::])
-    print len(default_signal)
-    print len(no_cr_signal)
-    new_ary=sci.int16(default_signal-no_cr_signal)
-    new_data = new_ary.tostring()
-    wf_out.writeframes(new_data)
+    left =sci.int32(ary[::2])
+    right = sci.int32(ary[1::2])
+    ary2=sci.int16((right-left)/2)
+    data2 = ary2.tostring()
+    wf_out.writeframes(data2)
     remain = remain-s
   wf_out.close()
-  wf_in_default.close()
-  wf_in_canseled_center.close()
+  wf_in.close()
 
-if __name__ =="__main__":
-  fname = "00.mix_NoEfect_SOZAI.wav"
-  filename = "mono_"+fname
-  filename2 = "CR_canselled_"+fname
-  export_center_file(filename,filename2)
+  chunk =1024
+  wf_in =wave.open(filename,'rb')
+
+  output_file = 'L_canseled_'+filename
+  wf_out =wave.open(output_file,'wb')
+  wf_out.setnchannels(2)
+  wf_out.setsampwidth(2)
+  wf_out.setframerate(44100)
+  remain = wf_in.getnframes()
+
+  while remain >0:
+    s = min(chunk,remain)
+    data = wf_in.readframes(s)
+    ary =sci.fromstring(data,sci.int16)
+    left =sci.int32(ary[::2])
+    right = sci.int32(ary[1::2])
+    ary2=sci.int16((left-right)/2)
+    data2 = ary2.tostring()
+    wf_out.writeframes(data2)
+    remain = remain-s
+  wf_out.close()
+  wf_in.close()
+
+
+
+
+if (__name__=="__main__"):
+  filename = "00.mix_NoEfect_SOZAI.wav"
+  canseled_center_file(filename)
