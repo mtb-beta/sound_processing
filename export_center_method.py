@@ -3,10 +3,11 @@
 """
 Author:mtb_beta
 Date:
-2012年 11月 3日 土曜日 22時06分20秒 JST
-Note:ステレオで入力されたwavファイルをモノラルに変換するメソッド
+2012年 11月 7日 水曜日 23時05分43秒 JST
+Note:
+左右の信号のそれぞれの差をとり、
+後に位相逆転させて、原音にぶつけて左右の音を消す。
 """
-
 def canseled_center_file(filename):
   import wave
   import scipy as sci
